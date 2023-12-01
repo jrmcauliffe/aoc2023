@@ -5,9 +5,9 @@ module Day01 exposing (..)
 -- Part 1 Find the first and last digit in a string and concatenate them
 
 
-lineDigit : String -> Int
+lineDigit : String -> Maybe Int
 lineDigit s =
-    (s |> findFirst) ++ (s |> String.reverse |> findFirst) |> String.toInt |> Maybe.withDefault 0
+    (s |> findFirst) ++ (s |> String.reverse |> findFirst) |> String.toInt
 
 
 findFirst : String -> String
@@ -34,7 +34,7 @@ findFirst s =
 
 part1 : List String -> Int
 part1 xs =
-    xs |> List.map lineDigit |> List.sum
+    xs |> List.filterMap lineDigit |> List.sum
 
 
 
@@ -46,7 +46,7 @@ wordList =
     [ ( "one", "1" ), ( "two", "2" ), ( "three", "3" ), ( "four", "4" ), ( "five", "5" ), ( "six", "6" ), ( "seven", "7" ), ( "eight", "8" ), ( "nine", "9" ) ]
 
 
-lineDigitPart2 : String -> Int
+lineDigitPart2 : String -> Maybe Int
 lineDigitPart2 s =
     let
         firstDigit : String
@@ -57,7 +57,7 @@ lineDigitPart2 s =
         lastDigit =
             s |> String.reverse |> findFirstWithWords (wordList |> List.map (\( a, b ) -> ( String.reverse a, b )))
     in
-    firstDigit ++ lastDigit |> String.toInt |> Maybe.withDefault 0
+    firstDigit ++ lastDigit |> String.toInt
 
 
 findFirstWithWords : List ( String, String ) -> String -> String
@@ -105,4 +105,4 @@ findFirstWithWords wl s =
 
 part2 : List String -> Int
 part2 xs =
-    xs |> List.map lineDigitPart2 |> List.sum
+    xs |> List.filterMap lineDigitPart2 |> List.sum
