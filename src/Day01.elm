@@ -2,136 +2,104 @@ module Day01 exposing (..)
 
 -- https://adventofcode.com/2023/day/1
 -- Unscramble the calibration document
+-- Part 1 Find the first and last digit in a string an concatenate them
 
 
 lineDigit : String -> Int
 lineDigit s =
-    let
-        firstNum i =
-            i |> String.toList |> List.filter Char.isDigit |> List.head |> Maybe.withDefault '0'
-
-        front =
-            firstNum s
-
-        back =
-            s |> String.reverse |> firstNum
-    in
-    [ front, back ] |> String.fromList |> String.toInt |> Maybe.withDefault 0
+    (s |> findFirst) ++ (s |> String.reverse |> findFirst) |> String.toInt |> Maybe.withDefault 0
 
 
-lineDigit2 : String -> Int
-lineDigit2 s =
-    let
-        front =
-            s |> replacer |> String.toList |> List.head |> Maybe.withDefault '0'
-
-        back =
-            s |> replacerR |> String.toList |> List.head |> Maybe.withDefault '0'
-    in
-    [ front, back ] |> String.fromList |> String.toInt |> Maybe.withDefault 0
-
-
-translations : List ( String, String )
-translations =
-    [ ( "one", "1" ), ( "two", "2" ), ( "three", "3" ), ( "four", "4" ), ( "five", "5" ), ( "six", "6" ), ( "seven", "7" ), ( "eight", "8" ), ( "nine", "9" ) ]
-
-
-reverseTranslations : List ( String, String )
-reverseTranslations =
-    translations |> List.map (\( a, b ) -> ( String.reverse a, b ))
-
-
-replacer : String -> String
-replacer s =
+findFirst : String -> String
+findFirst s =
     let
         firstChar =
-            s |> String.toList |> List.head |> Maybe.withDefault ' '
+            s |> String.toList |> List.head
     in
-    if String.isEmpty s then
-        ""
+    case firstChar of
+        Just c ->
+            if c |> Char.isDigit then
+                -- Found the first Digit
+                c |> String.fromChar
 
-    else if firstChar |> Char.isDigit then
-        String.fromChar firstChar ++ (String.dropLeft 1 s |> replacer)
+            else
+                -- Drop and keep looking
+                s |> String.dropLeft 1 |> findFirst
 
-    else if s |> String.startsWith "one" then
-        "1" ++ (String.dropLeft 3 s |> replacer)
-
-    else if s |> String.startsWith "two" then
-        "2" ++ (String.dropLeft 3 s |> replacer)
-
-    else if s |> String.startsWith "three" then
-        "3" ++ (String.dropLeft 5 s |> replacer)
-
-    else if s |> String.startsWith "four" then
-        "4" ++ (String.dropLeft 4 s |> replacer)
-
-    else if s |> String.startsWith "five" then
-        "5" ++ (String.dropLeft 4 s |> replacer)
-
-    else if s |> String.startsWith "six" then
-        "6" ++ (String.dropLeft 3 s |> replacer)
-
-    else if s |> String.startsWith "seven" then
-        "7" ++ (String.dropLeft 5 s |> replacer)
-
-    else if s |> String.startsWith "eight" then
-        "8" ++ (String.dropLeft 5 s |> replacer)
-
-    else if s |> String.startsWith "nine" then
-        "9" ++ (String.dropLeft 4 s |> replacer)
-
-    else
-        s |> String.dropLeft 1 |> replacer
+        Nothing ->
+            ""
 
 
-replacerR : String -> String
-replacerR s =
-    let
-        firstChar =
-            s |> String.reverse |> String.toList |> List.head |> Maybe.withDefault ' '
-    in
-    if String.isEmpty s then
-        ""
 
-    else if firstChar |> Char.isDigit then
-        String.fromChar firstChar ++ (String.dropRight 1 s |> replacerR)
-
-    else if s |> String.endsWith "one" then
-        "1" ++ (String.dropRight 3 s |> replacerR)
-
-    else if s |> String.endsWith "two" then
-        "2" ++ (String.dropRight 3 s |> replacerR)
-
-    else if s |> String.endsWith "three" then
-        "3" ++ (String.dropRight 5 s |> replacerR)
-
-    else if s |> String.endsWith "four" then
-        "4" ++ (String.dropRight 4 s |> replacerR)
-
-    else if s |> String.endsWith "five" then
-        "5" ++ (String.dropRight 4 s |> replacerR)
-
-    else if s |> String.endsWith "six" then
-        "6" ++ (String.dropRight 3 s |> replacerR)
-
-    else if s |> String.endsWith "seven" then
-        "7" ++ (String.dropRight 5 s |> replacerR)
-
-    else if s |> String.endsWith "eight" then
-        "8" ++ (String.dropRight 5 s |> replacerR)
-
-    else if s |> String.endsWith "nine" then
-        "9" ++ (String.dropRight 4 s |> replacerR)
-
-    else
-        s |> String.dropRight 1 |> replacerR
+-- Empty string, we're done here
 
 
-lineSum : List String -> Int
-lineSum xs =
+part1 : List String -> Int
+part1 xs =
     xs |> List.map lineDigit |> List.sum
 
 
-lineSum2 : List String -> Int
-lineSum2 xs =
-    xs |> List.map lineDigit2 |> List.sum
+
+-- Part 2 Now account for 'number words' as well as digits
+
+
+wordList : List ( String, String )
+wordList =
+    [ ( "one", "1" ), ( "two", "2" ), ( "three", "3" ), ( "four", "4" ), ( "five", "5" ), ( "six", "6" ), ( "seven", "7" ), ( "eight", "8" ), ( "nine", "9" ) ]
+
+
+lineDigitPart2 : String -> Int
+lineDigitPart2 s =
+    let
+        firstDigit =
+            s |> findFirstWithWords wordList
+
+        secondDigit =
+            s |> String.reverse |> findFirstWithWords (wordList |> List.map (\( a, b ) -> ( String.reverse a, b )))
+    in
+    firstDigit ++ secondDigit |> String.toInt |> Maybe.withDefault 0
+
+
+findFirstWithWords : List ( String, String ) -> String -> String
+findFirstWithWords wl s =
+    let
+        firstChar =
+            s |> String.toList |> List.head
+
+        -- Helper function to go through the wordlist and find the first match from the wordlist
+        findWord : String -> Maybe String
+        findWord ss =
+            wl
+                |> List.filterMap
+                    (\( a, b ) ->
+                        if String.startsWith a ss then
+                            Just b
+
+                        else
+                            Nothing
+                    )
+                |> List.head
+    in
+    case firstChar of
+        Just c ->
+            if c |> Char.isDigit then
+                -- Found the first Digit
+                c |> String.fromChar
+
+            else
+                -- Try and find a word instead
+                case findWord s of
+                    Just digit ->
+                        digit
+
+                    Nothing ->
+                        s |> String.dropLeft 1 |> findFirstWithWords wl
+
+        Nothing ->
+            -- Empty string, we're done here
+            ""
+
+
+part2 : List String -> Int
+part2 xs =
+    xs |> List.map lineDigitPart2 |> List.sum

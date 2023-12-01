@@ -5,6 +5,33 @@ import Expect exposing (equal)
 import Test exposing (..)
 
 
+
+-- Parse input string into list of ints
+
+
+parse : String -> List String
+parse s =
+    s |> String.lines |> List.map String.trim
+
+
+suite : Test
+suite =
+    describe "Day1 Tests"
+        [ describe "Part1 Examples"
+            [ test "Given Example" <|
+                \_ -> example1 |> parse |> part1 |> equal 142
+            , test "Problem" <|
+                \_ -> problem |> parse |> part1 |> equal 54630
+            ]
+        , describe "Part2 Examples"
+            [ test "Given Example" <|
+                \_ -> example2 |> parse |> part2 |> equal 281
+            , test "Problem" <|
+                \_ -> problem |> parse |> part2 |> equal 54770
+            ]
+        ]
+
+
 example1 =
     """1abc2
      pqr3stu8vwx
@@ -20,23 +47,6 @@ example2 =
        4nineeightseven2
        zoneight234
        7pqrstsixteen"""
-
-
-other =
-    """eightfivesssxxmgthreethreeone1sevenhnz
-    hzdlftdtfqfdbxgsix9onetwo13
-    29threelgxljfhrjr
-    pxvmbjprllmbfpzjxsvhc5
-    seven2jtgjltvzbcdnjtsfiveonebhkzld
-    twothreesixeight6eight6
-    nptjqqxoneninert1927
-    7beighttwob
-    6onesix
-    6fourfive97
-    jxcgpx5ninemsqqfmkpnj
-    jsdkqjbgx1gz5
-    9fourxxmdqmmlrbpqgznone8lvtxftmfpseven
-    qsdzrx6"""
 
 
 problem =
@@ -1040,30 +1050,3 @@ problem =
     ninesevensrzxkzpmgz8kcjxsbdftwoner
     4gbdzqtddmt4eightsixfive
     dljxl7five6nrzfh5one"""
-
-
-
--- Parse input string into list of ints
-
-
-parse : String -> List String
-parse s =
-    s |> String.lines |> List.map String.trim
-
-
-suite : Test
-suite =
-    describe "Day1 Tests"
-        [ describe "Part1 Examples"
-            [ test "Given Example" <|
-                \_ -> example1 |> parse |> lineSum |> equal 142
-            , test "Problem" <|
-                \_ -> problem |> parse |> lineSum |> equal 54630
-            ]
-        , describe "Part2 Examples"
-            [ test "Given Example" <|
-                \_ -> example2 |> parse |> lineSum2 |> equal 281
-            , test "Problem" <|
-                \_ -> problem |> parse |> lineSum2 |> equal 54770
-            ]
-        ]
