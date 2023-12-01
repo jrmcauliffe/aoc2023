@@ -27,11 +27,8 @@ findFirst s =
                 s |> String.dropLeft 1 |> findFirst
 
         Nothing ->
+            -- Empty string, we're done here
             ""
-
-
-
--- Empty string, we're done here
 
 
 part1 : List String -> Int
