@@ -6,7 +6,7 @@ import Test exposing (..)
 
 
 
--- Parse input string into list of ints
+-- Parse input string into list of Strings
 
 
 parse : String -> List String
@@ -40,7 +40,7 @@ example1 =
 
 
 example2 =
-    """"two1nine""
+    """"two1nine
        eightwothree
        abcone2threexyz
        xtwone3four

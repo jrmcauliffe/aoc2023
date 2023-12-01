@@ -2,7 +2,7 @@ module Day01 exposing (..)
 
 -- https://adventofcode.com/2023/day/1
 -- Unscramble the calibration document
--- Part 1 Find the first and last digit in a string an concatenate them
+-- Part 1 Find the first and last digit in a string and concatenate them
 
 
 lineDigit : String -> Int
@@ -13,6 +13,7 @@ lineDigit s =
 findFirst : String -> String
 findFirst s =
     let
+        firstChar : Maybe Char
         firstChar =
             s |> String.toList |> List.head
     in
@@ -48,22 +49,25 @@ wordList =
 lineDigitPart2 : String -> Int
 lineDigitPart2 s =
     let
+        firstDigit : String
         firstDigit =
             s |> findFirstWithWords wordList
 
-        secondDigit =
+        lastDigit : String
+        lastDigit =
             s |> String.reverse |> findFirstWithWords (wordList |> List.map (\( a, b ) -> ( String.reverse a, b )))
     in
-    firstDigit ++ secondDigit |> String.toInt |> Maybe.withDefault 0
+    firstDigit ++ lastDigit |> String.toInt |> Maybe.withDefault 0
 
 
 findFirstWithWords : List ( String, String ) -> String -> String
 findFirstWithWords wl s =
     let
+        firstChar : Maybe Char
         firstChar =
             s |> String.toList |> List.head
 
-        -- Helper function to go through the wordlist and find the first match from the wordlist
+        -- Helper function to go through the wordlist and maybe find a match
         findWord : String -> Maybe String
         findWord ss =
             wl
@@ -86,9 +90,11 @@ findFirstWithWords wl s =
             else
                 -- Try and find a word instead
                 case findWord s of
+                    -- Found a word match
                     Just digit ->
                         digit
 
+                    -- No match, drop a character and keep looking
                     Nothing ->
                         s |> String.dropLeft 1 |> findFirstWithWords wl
 
